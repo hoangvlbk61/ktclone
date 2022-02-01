@@ -19,7 +19,7 @@ router.post('/', async (request, response) => {
 
     const sessionId = await Session.create(user.id);
     request.session.id = sessionId;
-    response.status(201).json();
+    response.status(201).json({ssid: sessionId});
   } catch (error) {
     console.error(
       `POST session ({ email: ${request.body.email} }) >> ${error.stack})`

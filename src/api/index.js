@@ -2,11 +2,15 @@ const express = require("express");
 
 const { Router } = express;
 const router = new Router();
+const sessionMiddleware = require("../middleware/session-middleware"); 
 
 const user = require("./user");
 const session = require("./session");
 const task = require("./task");
+const taskUser = require("./task-user");
 const verify = require("./verify");
+
+router.use(sessionMiddleware);
 router.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -21,6 +25,7 @@ router.use(function (req, res, next) {
   next();
 });
 router.use("/api/users", user);
+router.use("/api/task-user", taskUser);
 router.use("/api/sessions", session);
 router.use("/api/tasks", task);
 router.use("/verify", verify);
