@@ -4,13 +4,13 @@ const bcrypt = require("bcrypt");
 const db = require("./db");
 
 module.exports = {
-  async create({ email, password, telephone, name, address }) {
+  async create({ email, password, user_social_id, telephone, name, address }) {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const { rows } = await db.query(sql`
-      INSERT INTO users (id, email, password, telephone, name, address, balance)
-        VALUES (${uuidv4()}, ${email}, ${hashedPassword}, ${telephone}, ${name}, ${address}, 0)
+      INSERT INTO users (id, email, password, user_social_id, telephone, name, address, balance)
+        VALUES (${uuidv4()}, ${email}, ${hashedPassword},${user_social_id}, ${telephone}, ${name}, ${address}, 0)
         RETURNING id, email;
       `);
 
