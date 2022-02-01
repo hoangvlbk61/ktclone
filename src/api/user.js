@@ -8,16 +8,14 @@ router.get("", async (request, response) => {
     const users = await User.list();
     return response.status(200).json(users);
   } catch (error) {
-    console.error(
-      `Userlist >> Error: ${error.stack}`
-    );
+    console.error(`Userlist >> Error: ${error.stack}`);
     response.status(500).json();
   }
 });
 
 router.post("", async (request, response) => {
   try {
-    const { email, password, telephone, name, address } = request.body;
+    const { email, password } = request.body;
     if (!email || !password) {
       return response
         .status(400)

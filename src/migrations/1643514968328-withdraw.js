@@ -13,7 +13,7 @@ module.exports.up = async function (next) {
   );
   `);
   await client.query(`
-  CREATE INDEX withdraw_idx on withdraw (id);
+  CREATE INDEX IF NOT EXISTS withdraw_idx on withdraw (id);
   `);
 
   // Create trigger and producer for auto add createAt & updatedAt for withdraw
@@ -30,7 +30,7 @@ module.exports.up = async function (next) {
   CREATE TRIGGER withdraw_timestamp_create BEFORE INSERT ON withdraw
     FOR EACH ROW EXECUTE PROCEDURE withdraw_timestamp_create();
 
-    CREATE FUNCTION withdraw_timestamp_update() RETURNS trigger AS $withdraw_timestamp_update$
+  CREATE FUNCTION withdraw_timestamp_update() RETURNS trigger AS $withdraw_timestamp_update$
     BEGIN
       -- Remember who changed the payroll when
       NEW.updated_at := current_timestamp;

@@ -10,13 +10,14 @@ module.exports.up = async function (next) {
     name text, 
     reward INT NOT NULL,
     related_data text,
+    max_turn INT NOT NULL,
     created_at timestamptz,
     updated_at timestamptz
   );
   `);
 
   await client.query(`
-  CREATE INDEX tasks_idx on tasks (id);
+    CREATE INDEX IF NOT EXISTS tasks_idx on tasks (id);
   `);
 
   // Create trigger and producer for auto add createAt & updatedAt for task
@@ -33,7 +34,7 @@ module.exports.up = async function (next) {
   CREATE TRIGGER task_timestamp_create BEFORE INSERT ON tasks
     FOR EACH ROW EXECUTE PROCEDURE task_timestamp_create();
 
-    CREATE FUNCTION task_timestamp_update() RETURNS trigger AS $task_timestamp_update$
+  CREATE FUNCTION task_timestamp_update() RETURNS trigger AS $task_timestamp_update$
     BEGIN
       -- Remember who changed the payroll when
       NEW.updated_at := current_timestamp;

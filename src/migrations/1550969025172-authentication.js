@@ -11,6 +11,7 @@ module.exports.up = async function (next) {
     telephone text NOT NULL,
     name text NOT NULL, 
     address text,
+    is_admin boolean NOT NULL,
     balance int NOT NULL,
     user_social_id text NOT NULL, 
     created_at timestamptz,
@@ -22,11 +23,10 @@ module.exports.up = async function (next) {
     user_id uuid REFERENCES users (id) ON DELETE CASCADE
     );
     `);
-
   // Index for faster db query
   await client.query(`
-  CREATE INDEX users_email on users (email);
-  CREATE INDEX sessions_user on sessions (user_id);
+    CREATE INDEX IF NOT EXISTS users_email on users (email);
+    CREATE INDEX IF NOT EXISTS sessions_user on sessions (user_id);
   `);
 
   // Create trigger and producer for auto add createAt & updatedAt for user
@@ -43,7 +43,7 @@ module.exports.up = async function (next) {
   CREATE TRIGGER user_timestamp_create BEFORE INSERT ON users
     FOR EACH ROW EXECUTE PROCEDURE user_timestamp_create();
   
-    CREATE FUNCTION user_timestamp_update() RETURNS trigger AS $user_timestamp_update$
+  CREATE FUNCTION user_timestamp_update() RETURNS trigger AS $user_timestamp_update$
     BEGIN
       -- Remember who changed the payroll when
       NEW.updated_at := current_timestamp;
@@ -53,7 +53,6 @@ module.exports.up = async function (next) {
 
   CREATE TRIGGER user_timestamp_update BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE PROCEDURE user_timestamp_update();
-
   `);
 
   await client.release(true);
@@ -64,8 +63,10 @@ module.exports.down = async function (next) {
   const client = await db.connect();
 
   await client.query(`
-  DROP TABLE sessions;
-  DROP TABLE users;
+    DROP TABLE sessions;
+    DROP TABLE users;
+    DROP INDEX users_email;
+    DROP INDEX sessions_user;
   `);
   // DROP TRIGGER user_timestamp_create on users;
   // DROP TRIGGER user_timestamp_update on users;

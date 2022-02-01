@@ -8,7 +8,7 @@ const ByPassUrl = [
 ];
 
 const sessionMiddleware = async (request, response, next) => {
-  const ssid = request.session.id || request.headers.ssid;
+  let ssid = request.headers.ssid || request.session.id;
   if (!ssid) {
     // Bypass default path
     const path = request.path;
@@ -27,6 +27,16 @@ const sessionMiddleware = async (request, response, next) => {
     // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
     const session = await Session.find(ssid);
     if (!session) {
+      // Bypass default path
+      const path = request.path;
+      const method = request.method;
+      if (
+        ByPassUrl.some(
+          (bpu) => bpu.path === path && bpu.method === method.toLowerCase()
+        )
+      ) {
+        return next();
+      }
       ssid = null;
       return response.sendStatus(401);
     }
