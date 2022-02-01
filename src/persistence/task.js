@@ -4,11 +4,17 @@ const bcrypt = require("bcrypt");
 const db = require("./db");
 
 module.exports = {
-  async create({ description, name, reward, related_data}) {
+  async create({
+    description = "",
+    name,
+    reward,
+    related_data = "{}",
+    max_turn,
+  }) {
     try {
       const { rows } = await db.query(sql`
-      INSERT INTO tasks (id, description, name, reward, related_data)
-        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data})
+      INSERT INTO tasks (id, description, name, reward, related_data, max_turn)
+        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn})
         RETURNING *;
       `);
 
