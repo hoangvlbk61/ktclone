@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const TaskUser = require("../persistence/task-user");
 const Task = require("../persistence/task");
+const User = require("../persistence/users");
 const { random } = require("../utils");
 const router = new Router();
 
@@ -19,7 +20,9 @@ router.get("/random", async (request, response) => {
   let rdTask = {};
   try {
     const taskDone = await TaskUser.listTaskDoneByUser(userId);
+    console.log("🚀 ~ file: task-user.js ~ line 23 ~ router.get ~ taskDone", taskDone)
     const allTask = await Task.list();
+    console.log("🚀 ~ file: task-user.js ~ line 25 ~ router.get ~ allTask", allTask)
 
     const taskDoneTurn = {};
     taskDone.forEach((tkDone) => {
@@ -49,26 +52,45 @@ router.get("/current", async (request, response) => {
   const userId = request.userId;
   let crTask = {};
   try {
-    const taskDone = await TaskUser.listTaskDoneByUser(userId);
-    const currentTask = taskDone.find((e) => !e.status);
+    const currentTask = await TaskUser.findCurrentTask(userId);
+    console.log("🚀 ~ file: task-user.js ~ line 56 ~ router.get ~ taskDone", currentTask)
+
     if (currentTask) crTask = currentTask;
     return response.status(200).json(crTask);
   } catch (error) {
-    console.error(`Task User List /random >> Error: ${error.stack}`);
+    console.error(`Task User List /current >> Error: ${error.stack}`);
     response.status(500).json();
   }
 });
 
 router.post("/finish", async (request, response) => {
   const userId = request.userId;
+  console.log("🚀 ~ file: task-user.js ~ line 68 ~ router.post ~ userId", userId)
   const { task_id: taskId } = request.body;
   if (!taskId) return response.status(400).json({ message: "Missing task_id" });
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
+    console.log("🚀 ~ file: task-user.js ~ line 72 ~ router.post ~ currentTask", currentTask)
     if (currentTask) {
       const updateRes = await TaskUser.updateStatusTrue(currentTask.id);
-      if (updateRes) return response.status(204).end();
-      else
+      console.log("🚀 ~ file: task-user.js ~ line 75 ~ router.post ~ updateRes", updateRes)
+      if (updateRes) {
+        const taskData = await Task.find(taskId);
+        console.log("🚀 ~ file: task-user.js ~ line 78 ~ router.post ~ taskData", taskData)
+        const user = await User.findById(userId);
+        console.log("🚀 ~ file: task-user.js ~ line 80 ~ router.post ~ user", user)
+        if (!taskData || !user)
+          return response
+            .status(400)
+            .json({ message: "task or user not exist" });
+        const updateUserBalance = await User.update({
+          ...user,
+          balance: user.balance + taskData.reward,
+        });
+        console.log("🚀 ~ file: task-user.js ~ line 89 ~ router.post ~ updateUserBalance", updateUserBalance)
+        if (updateUserBalance) return response.status(204).end();
+        else return response.status(400).end({message: "update user balance failed"});
+      } else
         return response.status(400).json({
           message: `Task id ${taskId} is not assigned to user ${userId}`,
         });
@@ -77,7 +99,7 @@ router.post("/finish", async (request, response) => {
         message: `Task id ${taskId} is not assigned to user ${userId}`,
       });
   } catch (error) {
-    console.error(`Task User List /random >> Error: ${error.stack}`);
+    console.error(`Task User List /finish >> Error: ${error.stack}`);
     response.status(500).json();
   }
 });
@@ -88,10 +110,12 @@ router.delete("/:taskId", async (request, response) => {
   if (!taskId) return response.status(400).json({ message: "Missing task_id" });
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
-    console.log("🚀 ~ file: task-user.js ~ line 91 ~ router.delete ~ currentTask", currentTask)
     if (currentTask) {
       const deleteRes = await TaskUser.deleteUserTask(currentTask.id);
-      console.log("🚀 ~ file: task-user.js ~ line 95 ~ router.delete ~ deleteRes", deleteRes)
+      console.log(
+        "🚀 ~ file: task-user.js ~ line 95 ~ router.delete ~ deleteRes",
+        deleteRes
+      );
       if (deleteRes) return response.status(204).end();
       else
         return response.status(400).json({
@@ -117,11 +141,10 @@ router.post("", async (request, response) => {
     const lastTask = await TaskUser.getLastUserTaskByUser(userId);
     if (lastTask) {
       if (!lastTask.status)
-        return response
-          .status(400)
-          .json({
-            message: "You currently have a task, please finish or cancel it first",
-          });
+        return response.status(400).json({
+          message:
+            "You currently have a task, please finish or cancel it first",
+        });
       else turn = lastTask.turn + 1;
     }
 
@@ -130,6 +153,7 @@ router.post("", async (request, response) => {
     if (!task) {
       return response.status(400).json({ message: "Task already exists" });
     }
+    return response.status(201).json(task);
   } catch (error) {
     console.error(`createTask() >> Error: ${error.stack}`);
     response.status(500).json();
