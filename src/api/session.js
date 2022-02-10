@@ -1,16 +1,16 @@
-const {Router} = require('express');
-const bcrypt = require('bcrypt');
+const { Router } = require("express");
+const bcrypt = require("bcrypt");
 
-const User = require('../persistence/users');
-const Session = require('../persistence/sessions');
+const User = require("../persistence/users");
+const Session = require("../persistence/sessions");
 
-const sessionMiddleware = require('../middleware/session-middleware');
+const sessionMiddleware = require("../middleware/session-middleware");
 
 const router = new Router();
 
-router.post('/', async (request, response) => {
+router.post("/", async (request, response) => {
   try {
-    const {email, password} = request.body;
+    const { email, password } = request.body;
     // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
     const user = await User.find(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -19,7 +19,8 @@ router.post('/', async (request, response) => {
 
     const sessionId = await Session.create(user.id);
     request.session.id = sessionId;
-    response.status(201).json({ssid: sessionId});
+    if (user.password) delete user.password;
+    response.status(201).json({ ssid: sessionId, user });
   } catch (error) {
     console.error(
       `POST session ({ email: ${request.body.email} }) >> ${error.stack})`
@@ -28,11 +29,11 @@ router.post('/', async (request, response) => {
   }
 });
 
-router.get('/', sessionMiddleware, (request, response) => {
-  response.json({userId: request.userId});
+router.get("/", sessionMiddleware, (request, response) => {
+  response.json({ userId: request.userId });
 });
 
-router.delete('/', async (request, response) => {
+router.delete("/", async (request, response) => {
   try {
     if (request.session.id) {
       await Session.delete(request.session.id);

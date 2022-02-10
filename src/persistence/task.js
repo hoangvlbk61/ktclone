@@ -10,11 +10,13 @@ module.exports = {
     reward,
     related_data = "{}",
     max_turn,
+    priority,
+    type_task,
   }) {
     try {
       const { rows } = await db.query(sql`
-      INSERT INTO tasks (id, description, name, reward, related_data, max_turn)
-        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn})
+      INSERT INTO tasks (id, description, name, reward, related_data, max_turn, priority, type_task)
+        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn}, ${priority}, ${type_task})
         RETURNING *;
       `);
 

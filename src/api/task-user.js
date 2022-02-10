@@ -20,9 +20,7 @@ router.get("/random", async (request, response) => {
   let rdTask = {};
   try {
     const taskDone = await TaskUser.listTaskDoneByUser(userId);
-    console.log("🚀 ~ file: task-user.js ~ line 23 ~ router.get ~ taskDone", taskDone)
     const allTask = await Task.list();
-    console.log("🚀 ~ file: task-user.js ~ line 25 ~ router.get ~ allTask", allTask)
 
     const taskDoneTurn = {};
     taskDone.forEach((tkDone) => {
@@ -30,7 +28,7 @@ router.get("/random", async (request, response) => {
       if (!taskDoneTurn[task_id]) taskDoneTurn[task_id] = 0;
       if (tkDone.status) taskDoneTurn[task_id] = taskDoneTurn[task_id] + 1;
     });
-    const canAssignTasks = allTask.filter((tk) => {
+    let canAssignTasks = allTask.filter((tk) => {
       const tId = tk.task_id;
       if (tId === 0) return false;
       if (taskDoneTurn[tId] === undefined || taskDoneTurn[tId] === null)
@@ -38,6 +36,9 @@ router.get("/random", async (request, response) => {
       return tk.max_turn > taskDoneTurn[tId];
     });
     if (canAssignTasks.length > 0) {
+      canAssignTasks = canAssignTasks.sort((a, b) => b.priority - a.priority);
+      if (canAssignTasks.length > 5)
+        canAssignTasks = canAssignTasks.slice(0, 5);
       const randomIdx = random(0, canAssignTasks.length);
       rdTask = canAssignTasks[randomIdx];
     }
@@ -53,7 +54,10 @@ router.get("/current", async (request, response) => {
   let crTask = {};
   try {
     const currentTask = await TaskUser.findCurrentTask(userId);
-    console.log("🚀 ~ file: task-user.js ~ line 56 ~ router.get ~ taskDone", currentTask)
+    console.log(
+      "🚀 ~ file: task-user.js ~ line 56 ~ router.get ~ taskDone",
+      currentTask
+    );
 
     if (currentTask) crTask = currentTask;
     return response.status(200).json(crTask);
@@ -65,20 +69,16 @@ router.get("/current", async (request, response) => {
 
 router.post("/finish", async (request, response) => {
   const userId = request.userId;
-  console.log("🚀 ~ file: task-user.js ~ line 68 ~ router.post ~ userId", userId)
+
   const { task_id: taskId } = request.body;
   if (!taskId) return response.status(400).json({ message: "Missing task_id" });
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
-    console.log("🚀 ~ file: task-user.js ~ line 72 ~ router.post ~ currentTask", currentTask)
     if (currentTask) {
       const updateRes = await TaskUser.updateStatusTrue(currentTask.id);
-      console.log("🚀 ~ file: task-user.js ~ line 75 ~ router.post ~ updateRes", updateRes)
       if (updateRes) {
         const taskData = await Task.find(taskId);
-        console.log("🚀 ~ file: task-user.js ~ line 78 ~ router.post ~ taskData", taskData)
         const user = await User.findById(userId);
-        console.log("🚀 ~ file: task-user.js ~ line 80 ~ router.post ~ user", user)
         if (!taskData || !user)
           return response
             .status(400)
@@ -87,9 +87,11 @@ router.post("/finish", async (request, response) => {
           ...user,
           balance: user.balance + taskData.reward,
         });
-        console.log("🚀 ~ file: task-user.js ~ line 89 ~ router.post ~ updateUserBalance", updateUserBalance)
         if (updateUserBalance) return response.status(204).end();
-        else return response.status(400).end({message: "update user balance failed"});
+        else
+          return response
+            .status(400)
+            .end({ message: "update user balance failed" });
       } else
         return response.status(400).json({
           message: `Task id ${taskId} is not assigned to user ${userId}`,

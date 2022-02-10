@@ -9,6 +9,8 @@ module.exports.up = async function (next) {
     description text,
     name text, 
     reward INT NOT NULL,
+    priority INT NOT NULL,
+    type_task INT NOT NULL,
     related_data text,
     max_turn INT NOT NULL,
     created_at timestamptz,
