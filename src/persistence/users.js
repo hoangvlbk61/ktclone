@@ -59,7 +59,6 @@ module.exports = {
     // if(address) query.append(sql`address=${address}, `);
     // if(balance) query.append(sql`balance=${balance},`);
     // query.append(sql`WHERE id=${id} RETURNING *`);
-    console.log("🚀 ~ file: users.js ~ line 56 ~ update ~ query", query);
     try {
       const { rows } = await db.query(query, [...val, id]);
 

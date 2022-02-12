@@ -35,5 +35,46 @@ router.post("", async (request, response) => {
     response.status(500).json();
   }
 });
+router.patch("/:userId", async (request, response) => {
+  try {
+    const {userId} = request.params;
+    // const userId = request.userId;
+    if (!userId)
+      return response.status(400).json({ message: "User not exist" });
+    const user = await User.update({...request.body, id: userId});
+    if (!user) {
+      return response.status(400).json({ message: "Update user failed" });
+    }
+    if (user.password) delete user.password;
+    return response.status(200).json(user);
+  } catch (error) {
+    console.error(
+      `createUser({ email: ${request.body.email} }) >> Error: ${error.stack}`
+    );
+    response.status(500).json();
+  }
+});
+
+router.delete("/:userId", async (request, response) => {
+  try {
+    const userId = request.userId;
+    const { deleteUserId } = request.params;
+    if (!userId)
+      return response.status(400).json({ message: "User not exist" });
+    if (userId === deleteUserId)
+      return response.status(400).json({ message: "Can not delete yourself" });
+    const user = await User.update(request.body);
+    if (!user) {
+      return response.status(400).json({ message: "Update user failed" });
+    }
+    if (user.password) delete user.password;
+    return response.status(200).json(user);
+  } catch (error) {
+    console.error(
+      `createUser({ email: ${request.body.email} }) >> Error: ${error.stack}`
+    );
+    response.status(500).json();
+  }
+});
 
 module.exports = router;
