@@ -54,6 +54,24 @@ router.patch("/:userId", async (request, response) => {
     response.status(500).json();
   }
 });
+router.delete("/:userId", async (request, response) => {
+  try {
+    const {userId} = request.params;
+    if (!userId)
+      return response.status(400).json({ message: "User not exist" });
+    const user = await User.deleteUser({id: userId});
+    if (!user) {
+      return response.status(400).json({ message: "delete user failed" });
+    }
+    if (user.password) delete user.password;
+    return response.status(203).json(user);
+  } catch (error) {
+    console.error(
+      `createUser({ email: ${request.body.email} }) >> Error: ${error.stack}`
+    );
+    response.status(500).json();
+  }
+});
 
 router.delete("/:userId", async (request, response) => {
   try {

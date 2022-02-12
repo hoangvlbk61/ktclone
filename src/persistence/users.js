@@ -90,4 +90,18 @@ module.exports = {
     `);
     return rows;
   },
+  async deleteUser(id) {
+    try {
+      const { rows } = await db.query(sql`
+      DELETE FROM users
+      WHERE id=${id}
+      RETURNING *;
+      `);
+
+      const [user] = rows;
+      return user;
+    } catch (error) {
+      return null;
+    }
+  },
 };
