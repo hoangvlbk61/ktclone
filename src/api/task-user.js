@@ -77,7 +77,7 @@ router.post("/finish", async (request, response) => {
     if (currentTask) {
       const updateRes = await TaskUser.updateStatusTrue(currentTask.id);
       if (updateRes) {
-        const taskData = await Task.find(taskId);
+        const taskData = await Task.findById(taskId);
         const user = await User.findById(userId);
         if (!taskData || !user)
           return response

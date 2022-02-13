@@ -18,7 +18,7 @@ router.delete("/:withdrawId", adminMiddleware, async (request, response) => {
   const { withdrawId } = request.params;
   try {
     const withdraw = await Withdraw.delete(withdrawId);
-    if (!withdraw) return response.json(404);
+    if (!withdraw) return response.status(404).json({message: "withdraw not exist"});
     return response.status(200).json(withdraw);
   } catch (error) {
     console.error(`Withdraw delete >> Error: ${error.stack}`);
@@ -33,7 +33,7 @@ router.get("/:withdrawId", async (request, response) => {
   const { withdrawId } = request.params;
   try {
     const withdraw = await Withdraw.findById(withdrawId);
-    if (!withdraw) return response.json(404);
+    if (!withdraw) return response.status(404).json({message: "withdraw not exist"});
     else {
       if (!is_admin && userIdRequester !== withdraw.user_id)
         return response
@@ -81,7 +81,7 @@ router.patch(
     const { withdrawId } = request.params;
     try {
       const withdraw = await Withdraw.update(withdrawId, 1);
-      if (!withdraw) return response.json(404);
+      if (!withdraw) return response.status(404).json({message: "withdraw not exist"});
       return response.status(200).json(withdraw);
     } catch (error) {
       console.error(`Withdraw List >> Error: ${error.stack}`);
