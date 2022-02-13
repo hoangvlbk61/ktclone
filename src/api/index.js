@@ -9,6 +9,7 @@ const session = require("./session");
 const task = require("./task");
 const taskUser = require("./task-user");
 const verify = require("./verify");
+const withdraw = require("./withdraw");
 
 router.use(sessionMiddleware);
 router.use(function (req, res, next) {
@@ -28,6 +29,7 @@ router.use("/api/users", user);
 router.use("/api/task-user", taskUser);
 router.use("/api/sessions", session);
 router.use("/api/tasks", task);
+router.use("/api/withdraw", withdraw);
 router.use("/verify", verify);
 
 module.exports = router;
