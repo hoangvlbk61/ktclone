@@ -53,15 +53,23 @@ router.patch("/:withdrawId/cancel", async (request, response) => {
   const { withdrawId } = request.params;
   try {
     const withdraw = await Withdraw.findById(withdrawId);
-    if (!withdraw) return response.json(404);
+    if (!withdraw) return response.status(404).json({message: "Withdraw not exist"});
     else if (!is_admin && userIdRequester !== withdraw.user_id)
       return response
         .status(403)
         .json({ message: "Can not update withdraw of others" });
+    if(withdraw.status !== "0") 
+    return response
+    .status(400)
+    .json({ message: "This withdraw is processed, can not be processed anymore" });
+    const user = await User.findById(withdraw.user_id); 
+    const newUserBalance = parseInt(user.balance, 10) + parseInt(withdraw.amount, 10);
     const updateWd = await Withdraw.update(withdrawId, 2);
+    const updateUs = await User.update({id: withdraw.user_id, balance: newUserBalance});
+    if(!updateWd || !updateUs) return response.status(400).json({message: "Error in update withdraw or user"})
     return response.status(200).json(updateWd);
   } catch (error) {
-    console.error(`Withdraw List >> Error: ${error.stack}`);
+    console.error(`Withdraw Cancel >> Error: ${error.stack}`);
     response.status(500).json();
   }
 });
@@ -87,20 +95,21 @@ router.post("", async (request, response) => {
   try {
     const { amount } = request.body;
     const wdAmount = parseInt(amount, 10);
+    console.log("🚀 ~ file: withdraw.js ~ line 94 ~ router.post ~ wdAmount", wdAmount)
     if (!wdAmount)
       return response.status(400).json({ message: `Missing ${key}` });
-    if (parseInt(wdAmount, 10) < 10000)
+    if (wdAmount < 10000)
       return response.status(400).json({
         message: `Withdraw amount too small, please try a bigger one`,
       });
-    const user = User.findById(userId);
-    const userBalance = user.balance;
+    const user = await User.findById(userId);
+    const userBalance = parseInt(user.balance, 10);
     if (userBalance < wdAmount)
       return response.status(400).json({
         message: `Insufficient funds, please consider withdraw with smaller amount`,
       });
     const newUserBalance = userBalance - wdAmount;
-    const wd = await Withdraw.create({ userId, status: 0, wdAmount });
+    const wd = await Withdraw.create( userId, 0, wdAmount );
     const us = await User.update({ id: userId, balance: newUserBalance });
     if (!wd || !us) {
       return response.status(400).json({ message: "Create withdraw error" });

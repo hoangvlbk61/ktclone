@@ -76,7 +76,7 @@ router.patch("/:userId", async (request, response) => {
     // const userId = request.userId;
     if (!userId)
       return response.status(400).json({ message: "User not exist" });
-    const user = await User.update({ ...request.body, id: userId });
+    const user = await User.update({ ...request.body, id: userId, balance: undefined });
     if (!user) {
       return response.status(400).json({ message: "Update user failed" });
     }
