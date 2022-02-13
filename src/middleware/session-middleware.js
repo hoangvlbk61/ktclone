@@ -1,4 +1,5 @@
 const Session = require("../persistence/sessions");
+const User = require("../persistence/users");
 
 const ByPassUrl = [
   { path: "/verify", method: "post" },
@@ -26,6 +27,7 @@ const sessionMiddleware = async (request, response, next) => {
   try {
     // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
     const session = await Session.find(ssid);
+    let user = null;
     if (!session) {
       // Bypass default path
       const path = request.path;
@@ -39,9 +41,11 @@ const sessionMiddleware = async (request, response, next) => {
       }
       ssid = null;
       return response.sendStatus(401);
+    } else {
+      user = await User.findById(session.userId);
     }
-
     request.userId = session.userId;
+    if(user) request.is_admin = user.is_admin;
     next();
   } catch (error) {
     console.error(`SessionMiddleware(${ssid}) >> Error: ${error.stack}`);
