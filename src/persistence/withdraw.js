@@ -17,7 +17,7 @@ module.exports = {
   },
   async update(id, status) {
     await db.query(sql`
-    UPDATE task_user
+    UPDATE withdraw
       SET status=${status}
       WHERE id=${id}
       RETURNING *;
