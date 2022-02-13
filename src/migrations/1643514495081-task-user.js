@@ -53,7 +53,12 @@ module.exports.down = async function (next) {
   const client = await db.connect();
 
   await client.query(`
-  DROP TABLE task_user;
+    DROP TRIGGER user_task_timestamp_create on task_user;
+    DROP TRIGGER user_task_timestamp_update on task_user;
+    DROP INDEX IF EXISTS task_user_idx;
+    DROP FUNCTION user_task_timestamp_create;
+    DROP FUNCTION user_task_timestamp_update;
+    DROP TABLE task_user;
   `);
 
   await client.release(true);

@@ -8,6 +8,7 @@ module.exports.up = async function (next) {
     id uuid PRIMARY KEY,
     user_id uuid REFERENCES users (id) ON UPDATE CASCADE,
     status int NOT NULL, 
+    amount int NOT NULL,
     created_at timestamptz,
     updated_at timestamptz
   );
@@ -51,7 +52,12 @@ module.exports.down = async function (next) {
   const client = await db.connect();
 
   await client.query(`
-  DROP TABLE withdraw;
+    DROP TRIGGER withdraw_timestamp_create on withdraw;
+    DROP TRIGGER withdraw_timestamp_update on withdraw;
+    DROP INDEX IF EXISTS withdraw_idx;
+    DROP FUNCTION withdraw_timestamp_create;
+    DROP FUNCTION withdraw_timestamp_update;
+    DROP TABLE withdraw;
   `);
 
   await client.release(true);
