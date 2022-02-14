@@ -2,7 +2,9 @@
 version: "3"
 services:
   app:
-    build: .
+    build:
+      context: .
+      network: none
     depends_on:
       - postgres
     environment:
@@ -32,3 +34,24 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@kt.com
       PGADMIN_DEFAULT_PASSWORD: password
+  # pgbackups:
+  #   container_name: Backup
+  #   image: prodrigestivill/postgres-backup-local
+  #   restart: always
+  #   volumes:
+  #     - ./backup:/backups
+  #   links:
+  #     - db:db
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_DB=db 
+  #     - POSTGRES_USER=user
+  #     - POSTGRES_PASSWORD=pass
+  #     - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+  #     - SCHEDULE=@every 0h15m00s
+  #     - BACKUP_KEEP_DAYS=7
+  #     - BACKUP_KEEP_WEEKS=4
+  #     - BACKUP_KEEP_MONTHS=6
+  #     - HEALTHCHECK_PORT=81
