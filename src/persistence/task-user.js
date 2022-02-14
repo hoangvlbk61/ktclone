@@ -48,7 +48,20 @@ module.exports = {
       if (dataQuery[k] === undefined || dataQuery[k] === null)
         delete dataQuery[k];
     });
-    let query = `SELECT * FROM task_user WHERE user_id = $1 and status = $2`; 
+    let query = `SELECT tasks.id AS id,
+    tasks.description AS description,
+    tasks.name AS name,
+    tasks.reward AS reward,
+    tasks.priority AS priority,
+    tasks.type_task AS type_task,
+    tasks.related_data AS related_data,
+    tasks.max_turn AS max_turn,
+    tasks.created_at AS created_at,
+    tasks.updated_at AS updated_at,
+    task_user.created_at AS tu_created_at,
+    task_user.updated_at AS tu_updated_at,
+    task_user.turn AS turn
+    FROM tasks JOIN task_user ON task_user.task_id=tasks.id WHERE user_id = $1 and status = $2`; 
     if(task_id) query = `${query} and task_id = $3`; 
     query = `${query} LIMIT 1;`
     const { rows } = await db.query(query, Object.values(dataQuery));
