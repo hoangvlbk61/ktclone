@@ -60,7 +60,8 @@ module.exports = {
     tasks.updated_at AS updated_at,
     task_user.created_at AS tu_created_at,
     task_user.updated_at AS tu_updated_at,
-    task_user.turn AS turn
+    task_user.turn AS turn,
+    task_user.id AS task_user_id
     FROM tasks JOIN task_user ON task_user.task_id=tasks.id WHERE user_id = $1 and status = $2`; 
     if(task_id) query = `${query} and task_id = $3`; 
     query = `${query} LIMIT 1;`
@@ -121,12 +122,14 @@ module.exports = {
     }
   },
   async deleteUserTask(id) {
+    console.log("🚀 ~ file: task-user.js ~ line 125 ~ deleteUserTask ~ id", id)
     try {
       const { rows } = await db.query(sql`
       DELETE FROM task_user
       WHERE id=${id}
       RETURNING *;
       `);
+      console.log("🚀 ~ file: task-user.js ~ line 131 ~ deleteUserTask ~ rows", rows)
 
       const [task_user] = rows;
       return task_user;

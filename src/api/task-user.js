@@ -54,11 +54,6 @@ router.get("/current", async (request, response) => {
   let crTask = {};
   try {
     const currentTask = await TaskUser.findCurrentTask(userId);
-    console.log(
-      "🚀 ~ file: task-user.js ~ line 56 ~ router.get ~ taskDone",
-      currentTask
-    );
-
     if (currentTask) crTask = currentTask;
     return response.status(200).json(crTask);
   } catch (error) {
@@ -75,7 +70,7 @@ router.post("/finish", async (request, response) => {
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
-      const updateRes = await TaskUser.updateStatusTrue(currentTask.id);
+      const updateRes = await TaskUser.updateStatusTrue(currentTask.task_user_id);
       if (updateRes) {
         const taskData = await Task.findById(taskId);
         const user = await User.findById(userId);
@@ -113,11 +108,7 @@ router.delete("/:taskId", async (request, response) => {
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
-      const deleteRes = await TaskUser.deleteUserTask(currentTask.id);
-      console.log(
-        "🚀 ~ file: task-user.js ~ line 95 ~ router.delete ~ deleteRes",
-        deleteRes
-      );
+      const deleteRes = await TaskUser.deleteUserTask(currentTask.task_user_id);
       if (deleteRes) return response.status(204).end();
       else
         return response.status(400).json({
