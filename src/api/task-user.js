@@ -3,6 +3,7 @@ const TaskUser = require("../persistence/task-user");
 const Task = require("../persistence/task");
 const User = require("../persistence/users");
 const { random } = require("../utils");
+const validator = require("../utils/core-validator");
 const router = new Router();
 
 router.get("", async (request, response) => {
@@ -65,11 +66,34 @@ router.get("/current", async (request, response) => {
 router.post("/finish", async (request, response) => {
   const userId = request.userId;
 
-  const { task_id: taskId } = request.body;
+  const { task_id: taskId, key } = request.body;
   if (!taskId) return response.status(400).json({ message: "Missing task_id" });
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
+      // validate first 
+      const startTime = currentTask.tu_created_at; 
+      let related_data = currentTask.related_data; 
+      let origin = null;
+      let isValid = true;
+      try {
+        related_data = JSON.parse(related_data);
+        if(currentTask.type_task === "TRAFFIC") {
+          origin = related_data.origin;
+          if(origin) 
+          isValid = validator({date: startTime, origin}, key)
+          else isValid = false;
+        } else if (related_data && related_data.key) {
+          isValid = related_data.key === key
+        }
+      } catch (error) {
+        isValid = false;
+      }
+      
+      if(!isValid) return response
+        .status(403)
+        .json({ message: "Key khong hop le" });
+      // validate 
       const updateRes = await TaskUser.updateStatusTrue(currentTask.task_user_id);
       if (updateRes) {
         const taskData = await Task.findById(taskId);
