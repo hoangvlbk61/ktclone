@@ -16,13 +16,23 @@ router.get("", async (request, response) => {
 
 router.post("", async (request, response) => {
   try {
-    const { email, password } = request.body;
-    if (!email || !password) {
+    const { email, password, user_social_id } = request.body;
+    if (!email || !password || !user_social_id) {
       return response
         .status(400)
-        .json({ message: "email and password must be provided" });
+        .json({
+          message: "email and password and user_social_id must be provided",
+        });
     }
 
+    const findUserWithSId = await User.findBySocialId(user_social_id);
+    if (findUserWithSId)
+      return response
+        .status(400)
+        .json({
+          message: "Social id existence. ",
+          user_mail: findUserWithSId.email,
+        });
     const user = await User.create(request.body);
     if (!user) {
       return response.status(400).json({ message: "User already exists" });
@@ -38,16 +48,16 @@ router.post("", async (request, response) => {
 });
 
 router.get("/:userId", async (request, response) => {
-  const {userId} = request.params; 
-  const userIdRequester = request.userId; 
-  const is_admin = request.is_admin; 
-  if(!is_admin && userIdRequester !==  userId) 
-    return response.status(401).json({message: "Can not get user of others"});
+  const { userId } = request.params;
+  const userIdRequester = request.userId;
+  const is_admin = request.is_admin;
+  if (!is_admin && userIdRequester !== userId)
+    return response.status(401).json({ message: "Can not get user of others" });
   try {
     const user = await User.findById(userId);
-    if(user)
-    return response.status(200).json(user);
-    else return response.status(404).json({message: `user ${userId} not exist`});
+    if (user) return response.status(200).json(user);
+    else
+      return response.status(404).json({ message: `user ${userId} not exist` });
   } catch (error) {
     console.error(`Userlist >> Error: ${error.stack}`);
     response.status(500).json();
@@ -55,11 +65,13 @@ router.get("/:userId", async (request, response) => {
 });
 
 router.get("/:userId/withdraw", async (request, response) => {
-  const {userId} = request.params; 
-  const userIdRequester = request.userId; 
-  const is_admin = request.is_admin; 
-  if(!is_admin && userIdRequester !==  userId) 
-    return response.status(401).json({message: "Can not get withdraw of others"});
+  const { userId } = request.params;
+  const userIdRequester = request.userId;
+  const is_admin = request.is_admin;
+  if (!is_admin && userIdRequester !== userId)
+    return response
+      .status(401)
+      .json({ message: "Can not get withdraw of others" });
   try {
     const { userId } = request.params;
     const withdraws = await Withdraw.getListByUser(userId);
@@ -76,7 +88,11 @@ router.patch("/:userId", async (request, response) => {
     // const userId = request.userId;
     if (!userId)
       return response.status(400).json({ message: "User not exist" });
-    const user = await User.update({ ...request.body, id: userId, balance: undefined });
+    const user = await User.update({
+      ...request.body,
+      id: userId,
+      balance: undefined,
+    });
     if (!user) {
       return response.status(400).json({ message: "Update user failed" });
     }

@@ -33,17 +33,34 @@ module.exports = {
       throw error;
     }
   },
-  async update({ user_social_id, telephone, name, address, balance, id, related_data }) {
-    const updateObj = { user_social_id, telephone, name, address, balance, related_data };
+  async update({
+    user_social_id,
+    telephone,
+    name,
+    address,
+    balance,
+    id,
+    related_data,
+  }) {
+    const updateObj = {
+      user_social_id,
+      telephone,
+      name,
+      address,
+      balance,
+      related_data,
+    };
     Object.keys(updateObj).forEach((k) => {
       if (updateObj[k] === undefined || updateObj[k] === null)
         delete updateObj[k];
     });
     const val = [];
-    const updateCondStr = Object.keys(updateObj).map((k, idx) => {
-      val.push(updateObj[k]);
-      return `${k}= $${idx + 1}`;
-    }).join(", ");
+    const updateCondStr = Object.keys(updateObj)
+      .map((k, idx) => {
+        val.push(updateObj[k]);
+        return `${k}= $${idx + 1}`;
+      })
+      .join(", ");
     // const condLength = Object.keys(updateObj).length;
     // const updateCondArr = Object.keys(updateObj).map((k, idx) => {
     //   if (idx < condLength - 1) return sql`${k}=${updateObj[k]},`;
@@ -53,7 +70,9 @@ module.exports = {
     // updateCondArr.forEach((s) => {
     //   query.append(s);
     // });
-    let query = `UPDATE users SET ${updateCondStr} WHERE id=$${val.length + 1} RETURNING *`; 
+    let query = `UPDATE users SET ${updateCondStr} WHERE id=$${
+      val.length + 1
+    } RETURNING *`;
     // if(user_social_id) query.append(sql`user_social_id=${user_social_id}, `);
     // if(telephone) query.append(sql`telephone=${telephone}, `);
     // if(name) query.append(sql`name=${name}, `);
@@ -76,6 +95,12 @@ module.exports = {
   async find(email) {
     const { rows } = await db.query(sql`
     SELECT * FROM users WHERE email=${email} LIMIT 1;
+    `);
+    return rows[0];
+  },
+  async findBySocialId(user_social_id) {
+    const { rows } = await db.query(sql`
+    SELECT * FROM users WHERE user_social_id=${user_social_id} LIMIT 1;
     `);
     return rows[0];
   },
