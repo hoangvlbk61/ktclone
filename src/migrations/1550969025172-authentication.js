@@ -14,6 +14,7 @@ module.exports.up = async function (next) {
     is_admin boolean NOT NULL,
     balance int NOT NULL,
     user_social_id text NOT NULL, 
+    related_data text,
     created_at timestamptz,
     updated_at timestamptz
   );

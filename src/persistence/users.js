@@ -8,6 +8,7 @@ module.exports = {
     email,
     password,
     user_social_id,
+    related_data = "{}",
     telephone,
     name,
     address,
@@ -17,8 +18,8 @@ module.exports = {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const { rows } = await db.query(sql`
-      INSERT INTO users (id, email, password, user_social_id, telephone, name, address, balance, is_admin)
-        VALUES (${uuidv4()}, ${email}, ${hashedPassword},${user_social_id}, ${telephone}, ${name}, ${address}, 0, ${is_admin})
+      INSERT INTO users (id, email, password, user_social_id, telephone, name, address, balance, is_admin, related_data)
+        VALUES (${uuidv4()}, ${email}, ${hashedPassword},${user_social_id}, ${telephone}, ${name}, ${address}, 0, ${is_admin}, ${related_data})
         RETURNING id, email;
       `);
 
@@ -32,8 +33,8 @@ module.exports = {
       throw error;
     }
   },
-  async update({ user_social_id, telephone, name, address, balance, id }) {
-    const updateObj = { user_social_id, telephone, name, address, balance };
+  async update({ user_social_id, telephone, name, address, balance, id, related_data }) {
+    const updateObj = { user_social_id, telephone, name, address, balance, related_data };
     Object.keys(updateObj).forEach((k) => {
       if (updateObj[k] === undefined || updateObj[k] === null)
         delete updateObj[k];
