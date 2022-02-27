@@ -78,14 +78,15 @@ router.post("/finish", async (request, response) => {
       let isValid = true;
       try {
         related_data = JSON.parse(related_data);
-        if(currentTask.type_task === "TRAFFIC") {
-          origin = related_data.origin;
-          if(origin) 
-          isValid = validator({date: startTime, origin}, key)
-          else isValid = false;
-        } else if (related_data && related_data.key) {
-          isValid = related_data.key === key
-        }
+        // if(currentTask.type_task === "TRAFFIC") {
+        origin = related_data.origin;
+        if(origin) 
+        isValid = validator({date: startTime, origin}, key)
+        else isValid = false;
+        // } else isValid = true
+        // else if (related_data && related_data.key) {
+        //   isValid = related_data.key === key
+        // }
       } catch (error) {
         isValid = false;
       }

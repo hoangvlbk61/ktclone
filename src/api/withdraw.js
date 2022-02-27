@@ -47,7 +47,7 @@ router.get("/:withdrawId", async (request, response) => {
   }
 });
 
-router.patch("/:withdrawId/cancel", async (request, response) => {
+router.post("/:withdrawId/cancel", async (request, response) => {
   const userIdRequester = request.userId;
   const is_admin = request.is_admin;
   const { withdrawId } = request.params;
@@ -74,7 +74,7 @@ router.patch("/:withdrawId/cancel", async (request, response) => {
   }
 });
 
-router.patch(
+router.post(
   "/:withdrawId/accept",
   adminMiddleware,
   async (request, response) => {

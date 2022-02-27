@@ -82,7 +82,7 @@ router.get("/:userId/withdraw", async (request, response) => {
   }
 });
 
-router.patch("/:userId", async (request, response) => {
+router.post("/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
     // const userId = request.userId;

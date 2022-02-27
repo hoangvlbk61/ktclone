@@ -29,7 +29,7 @@ router.get("/:taskId", async (request, response) => {
   }
 });
 
-router.patch("/:taskId", adminMiddleware, async (request, response) => {
+router.post("/:taskId", adminMiddleware, async (request, response) => {
   const { taskId } = request.params;
   try {
     const task = await Task.update({...request.body, id: taskId});
