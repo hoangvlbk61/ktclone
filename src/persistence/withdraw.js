@@ -38,9 +38,6 @@ module.exports = {
         FROM withdraw
         JOIN users ON withdraw.user_id = users.id
     `);
-    if (rows.length !== 1) {
-      return null;
-    }
     return rows;
   },
   async listByStatus(status) {
