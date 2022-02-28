@@ -78,9 +78,6 @@ module.exports = {
     const {rows} = await db.query(sql`
     SELECT * FROM withdraw WHERE user_id = ${uid};
     `);
-    if (rows.length !== 1) {
-      return [];
-    }
     return rows;
   },
   async delete(id) {
