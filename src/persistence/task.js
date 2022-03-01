@@ -12,11 +12,13 @@ module.exports = {
     max_turn,
     priority,
     type_task,
+    list_posts,
   }) {
     try {
+      if(!list_posts || !Array.isArray(list_posts)) throw new Error("list_posts invalid");
       const { rows } = await db.query(sql`
-      INSERT INTO tasks (id, description, name, reward, related_data, max_turn, priority, type_task)
-        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn}, ${priority}, ${type_task})
+      INSERT INTO tasks (id, description, name, reward, related_data, max_turn, priority, type_task, list_posts)
+        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn}, ${priority}, ${type_task}, ${list_posts})
         RETURNING *;
       `);
 
@@ -25,6 +27,7 @@ module.exports = {
     } catch (error) {
       // if (error.constraint === "users_email_key") {
       // }
+      console.log("Create task error", error)
       return null;
 
       throw error;

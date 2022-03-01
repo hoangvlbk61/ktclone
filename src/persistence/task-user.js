@@ -58,6 +58,7 @@ module.exports = {
     tasks.max_turn AS max_turn,
     tasks.created_at AS created_at,
     tasks.updated_at AS updated_at,
+    tasks.list_posts AS list_posts,
     task_user.created_at AS tu_created_at,
     task_user.updated_at AS tu_updated_at,
     task_user.turn AS turn,
@@ -83,6 +84,7 @@ module.exports = {
         task_user.turn AS turn,
         tasks.name AS name,
         tasks.reward AS reward,
+        tasks.list_posts AS list_posts,
         tasks.description AS description
         FROM task_user
         JOIN tasks ON task_user.task_id = tasks.id) AS R
@@ -99,6 +101,7 @@ module.exports = {
         task_user.turn AS turn,
         tasks.name AS name,
         tasks.reward AS reward,
+        tasks.list_posts AS list_posts,
         tasks.description AS description
         FROM task_user
         JOIN tasks ON task_user.task_id = tasks.id) AS R
