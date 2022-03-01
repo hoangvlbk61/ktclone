@@ -45,8 +45,8 @@ module.exports = {
     `);
     return rows;
   },
-  async update({ description, name, reward, priority, type_task, related_data, max_turn, id }) {
-    const updateObj = { description, name, reward, priority, type_task, related_data, max_turn};
+  async update({ description, name, reward, priority, type_task, related_data, max_turn, id, list_posts }) {
+    const updateObj = { description, name, reward, priority, type_task, related_data, max_turn, list_posts};
     Object.keys(updateObj).forEach((k) => {
       if (updateObj[k] === undefined || updateObj[k] === null)
         delete updateObj[k];
