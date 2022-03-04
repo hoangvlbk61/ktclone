@@ -1,10 +1,11 @@
 const { Router } = require("express");
 const User = require("../persistence/users");
 const Withdraw = require("../persistence/withdraw");
+const adminMiddleware = require("../middleware/admin-middleware");
 
 const router = new Router();
 
-router.get("", async (request, response) => {
+router.get("", adminMiddleware, async (request, response) => {
   try {
     const users = await User.list();
     return response.status(200).json(users);
@@ -47,7 +48,7 @@ router.post("", async (request, response) => {
   }
 });
 
-router.get("/:userId", async (request, response) => {
+router.get("/:userId", adminMiddleware, async (request, response) => {
   const { userId } = request.params;
   const userIdRequester = request.userId;
   const is_admin = request.is_admin;
@@ -106,7 +107,7 @@ router.post("/:userId", async (request, response) => {
   }
 });
 
-router.delete("/:userId", async (request, response) => {
+router.delete("/:userId", adminMiddleware, async (request, response) => {
   try {
     const userId = request.userId;
     const { userId: deleteUserId } = request.params;
