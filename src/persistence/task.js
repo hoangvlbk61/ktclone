@@ -13,12 +13,13 @@ module.exports = {
     priority,
     type_task,
     list_posts,
+    unlock_link = "",
   }) {
     try {
       if(!list_posts || !Array.isArray(list_posts)) throw new Error("list_posts invalid");
       const { rows } = await db.query(sql`
-      INSERT INTO tasks (id, description, name, reward, related_data, max_turn, priority, type_task, list_posts)
-        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn}, ${priority}, ${type_task}, ${list_posts})
+      INSERT INTO tasks (id, description, name, reward, related_data, max_turn, priority, type_task, list_posts, unlock_link)
+        VALUES (${uuidv4()}, ${description}, ${name}, ${reward}, ${related_data}, ${max_turn}, ${priority}, ${type_task}, ${list_posts}, ${unlock_link})
         RETURNING *;
       `);
 

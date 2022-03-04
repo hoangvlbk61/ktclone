@@ -12,6 +12,7 @@ module.exports.up = async function (next) {
     priority INT NOT NULL,
     type_task text NOT NULL,
     related_data text,
+    unlock_link text,
     list_posts text[],
     max_turn INT NOT NULL,
     created_at timestamptz,
