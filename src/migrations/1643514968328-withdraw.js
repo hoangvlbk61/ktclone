@@ -6,7 +6,7 @@ module.exports.up = async function (next) {
   await client.query(`
   CREATE TABLE IF NOT EXISTS withdraw (
     id uuid PRIMARY KEY,
-    user_id uuid REFERENCES users (id) ON UPDATE CASCADE,
+    user_id uuid REFERENCES users (id) ON DELETE CASCADE,
     status int NOT NULL, 
     amount int NOT NULL,
     created_at timestamptz,

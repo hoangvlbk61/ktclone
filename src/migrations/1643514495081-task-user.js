@@ -7,7 +7,7 @@ module.exports.up = async function (next) {
   CREATE TABLE IF NOT EXISTS task_user (
     id uuid PRIMARY KEY,
     user_id uuid REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    task_id uuid REFERENCES tasks (id) ON UPDATE CASCADE,
+    task_id uuid REFERENCES tasks (id) ON UPDATE CASCADE ON DELETE CASCADE,
     status boolean NOT NULL, 
     turn int NOT NULL,
     created_at timestamptz,
