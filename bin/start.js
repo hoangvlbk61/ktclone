@@ -1,3 +1,3 @@
 const Server = require('../server');
 
-Server.start(process.env.PORT);
+Server.start(process.env.HTTP_PORT, process.env.HTTPS_PORT);

@@ -1,7 +1,7 @@
 // RUn dev "dev": "set DATABASE_URL='postgres://user:pass@192.168.56.1:35432/db' && set NODE_ENV=development && set PORT=3000 && nodemon ./bin/start.js",
 
 const express = require("express");
-
+const fs = require('fs');
 const morgan = require("morgan");
 const clientSession = require("client-sessions");
 const helmet = require("helmet");
@@ -16,6 +16,13 @@ app.get("/health", (request, response) => response.sendStatus(200));
 
 app.use(morgan("short"));
 app.use(express.json());
+
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('key/private.key', 'utf8');
+var certificate = fs.readFileSync('key/certificate.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 app.use(
   clientSession({
     cookieName: "session",
@@ -27,13 +34,18 @@ app.use(helmet());
 
 app.use(api);
 
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+
 let server;
 module.exports = {
-  start(port) {
-    server = app.listen(port, () => {
-      console.log(`App started on port ${port}`);
-    });
-    return app;
+  start(httpPort, httpsPort) {
+    server = httpServer.listen(httpPort);
+    server = httpsServer.listen(httpsPort);
+    console.log(`App started http on port ${httpPort}`);
+    console.log(`App started https on port ${httpsPort}`);
+    return httpServer;
   },
   stop() {
     server.close();
