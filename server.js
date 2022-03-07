@@ -19,8 +19,8 @@ app.use(express.json());
 
 var http = require('http');
 var https = require('https');
-var privateKey  = fs.readFileSync('key/private.key', 'utf8');
-var certificate = fs.readFileSync('key/certificate.crt', 'utf8');
+var privateKey  = fs.readFileSync('./apikey/private.key', 'utf8');
+var certificate = fs.readFileSync('./apikey/certificate.crt', 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 
 app.use(
@@ -41,8 +41,8 @@ var httpsServer = https.createServer(credentials, app);
 let server;
 module.exports = {
   start(httpPort, httpsPort) {
-    server = httpServer.listen(httpPort);
-    server = httpsServer.listen(httpsPort);
+    httpServer.listen(httpPort);
+    httpsServer.listen(httpsPort);
     console.log(`App started http on port ${httpPort}`);
     console.log(`App started https on port ${httpsPort}`);
     return httpServer;
