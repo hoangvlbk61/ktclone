@@ -5,6 +5,8 @@ const User = require('../persistence/users');
 const Session = require('../persistence/sessions');
 
 const router = new Router();
+const headerMiddleware = require("../middleware/header-middleware"); 
+router.use(headerMiddleware);
 
 router.post('/', async (request, response) => {
   try {

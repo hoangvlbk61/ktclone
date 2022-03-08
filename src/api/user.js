@@ -4,6 +4,8 @@ const Withdraw = require("../persistence/withdraw");
 const adminMiddleware = require("../middleware/admin-middleware");
 
 const router = new Router();
+const headerMiddleware = require("../middleware/header-middleware"); 
+router.use(headerMiddleware);
 
 router.get("", adminMiddleware, async (request, response) => {
   try {

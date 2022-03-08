@@ -1,4 +1,6 @@
 const { Router } = require("express");
+const headerMiddleware = require("../middleware/header-middleware"); 
+
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const fs = require("fs");
@@ -36,7 +38,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
+router.use(headerMiddleware);
 router.post("", upload.single("file"), async (request, response) => {
   try {
     const fileId = request.fileId;

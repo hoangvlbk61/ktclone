@@ -5,6 +5,8 @@ const User = require("../persistence/users");
 const { random } = require("../utils");
 const validator = require("../utils/core-validator");
 const router = new Router();
+const headerMiddleware = require("../middleware/header-middleware"); 
+router.use(headerMiddleware);
 
 router.get("", async (request, response) => {
   try {

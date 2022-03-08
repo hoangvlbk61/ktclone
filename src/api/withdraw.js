@@ -3,6 +3,8 @@ const Withdraw = require("../persistence/withdraw");
 const User = require("../persistence/users");
 const adminMiddleware = require("../middleware/admin-middleware");
 const router = new Router();
+const headerMiddleware = require("../middleware/header-middleware"); 
+router.use(headerMiddleware);
 
 router.get("", async (request, response) => {
   try {

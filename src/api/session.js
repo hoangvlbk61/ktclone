@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const bcrypt = require("bcrypt");
+const headerMiddleware = require("../middleware/header-middleware"); 
 
 const User = require("../persistence/users");
 const Session = require("../persistence/sessions");
@@ -7,6 +8,7 @@ const Session = require("../persistence/sessions");
 const sessionMiddleware = require("../middleware/session-middleware");
 
 const router = new Router();
+router.use(headerMiddleware);
 
 router.post("/", async (request, response) => {
   try {
