@@ -27,9 +27,15 @@ const mdlCors = function (req, res, next) {
   next();
 };
 router.use(mdlCors);
+user.use(mdlCors);
+session.use(mdlCors);
+task.use(mdlCors);
+taskUser.use(mdlCors);
+verify.use(mdlCors);
+withdraw.use(mdlCors);
+file.use(mdlCors);
 router.use("/api", mdlCors);
 
-router.use("/api/users", user);
 router.use("/api/users", user);
 router.use("/api/task-user", taskUser);
 router.use("/api/sessions", session);
