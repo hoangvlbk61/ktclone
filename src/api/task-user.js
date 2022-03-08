@@ -82,11 +82,11 @@ router.post("/finish", async (request, response) => {
         origin = related_data.origin;
         if(origin) 
         isValid = validator({date: startTime, origin}, key)
-        else isValid = false;
+        // else isValid = false;
         // } else isValid = true
-        // else if (related_data && related_data.key) {
-        //   isValid = related_data.key === key
-        // }
+        else if (related_data && related_data.key) {
+          isValid = related_data.key === key
+        }
       } catch (error) {
         isValid = false;
       }
