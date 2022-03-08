@@ -13,7 +13,23 @@ const withdraw = require("./withdraw");
 const file = require("./file");
 
 router.use(sessionMiddleware);
+const mdlCors = function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+};
+router.use(mdlCors);
+router.use("/api", mdlCors);
 
+router.use("/api/users", user);
 router.use("/api/users", user);
 router.use("/api/task-user", taskUser);
 router.use("/api/sessions", session);
