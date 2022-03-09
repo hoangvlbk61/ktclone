@@ -4,8 +4,8 @@ const User = require("../persistence/users");
 const ByPassUrl = [
   { path: "/verify", method: "post" },
   { path: "", method: "get" },
-  { path: "/api/sessions", method: "post" },
-  { path: "/api/users", method: "post" },
+  { path: "/sessions", method: "post" },
+  { path: "/users", method: "post" },
 ];
 
 const sessionMiddleware = async (request, response, next) => {
