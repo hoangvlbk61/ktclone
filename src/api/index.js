@@ -17,12 +17,12 @@ const file = require("./file");
 
 router.use(sessionMiddleware);
 router.use(headerMiddleware);
-router.use("/api/users", user);
-router.use("/api/task-user", taskUser);
-router.use("/api/sessions", session);
-router.use("/api/tasks", task);
-router.use("/api/withdraw", withdraw);
-router.use("/api/files", file);
+router.use("/users", user);
+router.use("/task-user", taskUser);
+router.use("/sessions", session);
+router.use("/tasks", task);
+router.use("/withdraw", withdraw);
+router.use("/files", file);
 router.use("/verify", verify);
 
 module.exports = router;
