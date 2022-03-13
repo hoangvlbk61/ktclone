@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const headerMiddleware = require("../middleware/header-middleware"); 
+const headerMiddleware = require("../middleware/header-middleware");
 
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
@@ -58,12 +58,17 @@ router.get("/:fileId", async (request, response) => {
   const { fileId } = request.params;
   try {
     const file = await FileDb.find(fileId);
-    if(!file) return response.status(404).end();
+    if (!file) return response.status(404).end();
     const { id, user_id, ext } = file;
     const fileName = `${id}.${ext}`;
     // const imgPath = path.join(imgDir, user_id, fileName);
     const imgPath = path.join(imgDir, fileName);
-    fs.createReadStream(imgPath).pipe(response);
+    const fStr = fs.createReadStream(imgPath);
+    fStr.on("error", () => {
+      response.status(500).json();
+      return;
+    });
+    fStr.pipe(response);
   } catch (error) {
     console.log(`GET >> File ${fileId}`, error);
     response.status(500).json();
@@ -74,12 +79,12 @@ router.delete("/:fileId", async (request, response) => {
   const { fileId } = request.params;
   try {
     const file = await FileDb.find(fileId);
-    if(!file) return response.status(404).end();
+    if (!file) return response.status(404).end();
     const { id, user_id, ext } = file;
     const fileName = `${id}.${ext}`;
     const imgPath = path.join(imgDir, fileName);
     await FileDb.delete(id);
-    fs.unlinkSync(imgPath);
+    if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     response.status(204).end();
   } catch (error) {
     console.log(`DELETE >> File ${fileId}`, error);
