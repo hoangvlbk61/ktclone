@@ -5,7 +5,7 @@ const User = require("../persistence/users");
 const { random } = require("../utils");
 const validator = require("../utils/core-validator");
 const router = new Router();
-const headerMiddleware = require("../middleware/header-middleware"); 
+const headerMiddleware = require("../middleware/header-middleware");
 router.use(headerMiddleware);
 
 router.get("", async (request, response) => {
@@ -73,31 +73,37 @@ router.post("/finish", async (request, response) => {
   try {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
-      // validate first 
-      const startTime = currentTask.tu_created_at; 
-      let related_data = currentTask.related_data; 
+      // validate first
+      const startTime = currentTask.tu_created_at;
+      let related_data = currentTask.related_data;
       let origin = null;
       let isValid = true;
       try {
         related_data = JSON.parse(related_data);
         // if(currentTask.type_task === "TRAFFIC") {
         origin = related_data.origin;
-        if(origin) 
-        isValid = validator({date: startTime, origin}, key)
+        if (
+          origin &&
+          (currentTask.type_task === "TRAFFIC" ||
+            currentTask.type_task === "REVIEW_SOCIAL")
+        ) {
+          isValid = validator({ date: startTime, origin }, key);
+        }
         // else isValid = false;
         // } else isValid = true
         else if (related_data && related_data.key) {
-          isValid = related_data.key === key
+          isValid = related_data.key === key;
         }
       } catch (error) {
         isValid = false;
       }
-      
-      if(!isValid) return response
-        .status(403)
-        .json({ message: "Key khong hop le" });
-      // validate 
-      const updateRes = await TaskUser.updateStatusTrue(currentTask.task_user_id);
+
+      if (!isValid)
+        return response.status(403).json({ message: "Key khong hop le" });
+      // validate
+      const updateRes = await TaskUser.updateStatusTrue(
+        currentTask.task_user_id
+      );
       if (updateRes) {
         const taskData = await Task.findById(taskId);
         const user = await User.findById(userId);
