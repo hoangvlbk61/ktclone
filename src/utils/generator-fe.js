@@ -14,7 +14,7 @@ const randomStr = (length) => {
 };
 
 const getFullDate = () => {
-  const d = new Date();
+  const d = Date.now();
   return (
     ("0" + d.getDate()).slice(-2) +
     "-" +
@@ -28,7 +28,7 @@ const getFullDate = () => {
   );
 };
 
-const getDateString = () => new Date().toString();
+const getDateString = () => Date.now();
 
 function getRandomInt(n) {
   return Math.floor(Math.random() * n);

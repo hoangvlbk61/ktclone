@@ -39,12 +39,12 @@ const validateData = (originData, submitData) => {
 
   // Check if submitData date is after < 10min than originData
   const oriMm = moment(originData.date);
-  const sbMm = moment(submitData.date);
-  isValid = isValid && oriMm.isAfter(sbMm) && oriMm.diff(sbMm) <= 10;
+  const sbMm = moment(new Date(submitData.date));
+  isValid = isValid && sbMm.isAfter(oriMm) && moment.duration(sbMm.diff(oriMm)).asMinutes() <= 10;
 
   // Check if submitData date is after < 10min than originData
-  isValid = isValid && originData.origin === submitData.origin;
-
+  const rawUrl = new URL(originData.origin);
+  isValid = isValid && rawUrl.origin.replace("www.", '') === submitData.origin.replace("www.", '');
   // Check if submitData is open from gg or not
   // const hisDiff = submitData.historyLength - originData.historyLength;
   const hisDiff = submitData.historyLength;
@@ -64,5 +64,4 @@ const validator = (originalData, key) => {
     return false;
   }
 };
-
 module.exports = validator;
