@@ -22,7 +22,8 @@ createFileDirIfNotExist(imgDir);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const userId = req.userId;
-    const userDir = path.join(imgDir, userId);
+    // const userDir = path.join(imgDir, userId);
+    const userDir = path.join(imgDir);
     createFileDirIfNotExist(userDir);
     cb(null, userDir);
   },
@@ -60,7 +61,8 @@ router.get("/:fileId", async (request, response) => {
     if(!file) return response.status(404).end();
     const { id, user_id, ext } = file;
     const fileName = `${id}.${ext}`;
-    const imgPath = path.join(imgDir, user_id, fileName);
+    // const imgPath = path.join(imgDir, user_id, fileName);
+    const imgPath = path.join(imgDir, fileName);
     fs.createReadStream(imgPath).pipe(response);
   } catch (error) {
     console.log(`GET >> File ${fileId}`, error);
@@ -75,7 +77,7 @@ router.delete("/:fileId", async (request, response) => {
     if(!file) return response.status(404).end();
     const { id, user_id, ext } = file;
     const fileName = `${id}.${ext}`;
-    const imgPath = path.join(imgDir, user_id, fileName);
+    const imgPath = path.join(imgDir, fileName);
     await FileDb.delete(id);
     fs.unlinkSync(imgPath);
     response.status(204).end();
