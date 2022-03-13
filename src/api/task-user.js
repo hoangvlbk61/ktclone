@@ -74,10 +74,12 @@ router.post("/finish", async (request, response) => {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
       // validate first
-      const startTime = currentTask.tu_created_at;
+      const startTime = new Date.now();
       let related_data = currentTask.related_data;
       let origin = null;
       let isValid = true;
+      console.log("validator");
+      console.log("related_data", related_data);
       try {
         related_data = JSON.parse(related_data);
         // if(currentTask.type_task === "TRAFFIC") {
@@ -87,17 +89,29 @@ router.post("/finish", async (request, response) => {
           (currentTask.type_task === "TRAFFIC" ||
             currentTask.type_task === "REVIEW_SOCIAL")
         ) {
+          console.log("Run on origin");
+          console.log("in", { date: startTime, origin });
+          console.log("key", key);
           isValid = validator({ date: startTime, origin }, key);
         }
         // else isValid = false;
         // } else isValid = true
         else if (related_data && related_data.key) {
+          console.log("Run on other/ not traffic/review");
           isValid = related_data.key === key;
         }
       } catch (error) {
+        console.log(
+          "🚀 ~ file: task-user.js ~ line 103 ~ router.post ~ error",
+          error
+        );
         isValid = false;
       }
 
+      console.log(
+        "🚀 ~ file: task-user.js ~ line 107 ~ router.post ~ isValid",
+        isValid
+      );
       if (!isValid)
         return response.status(403).json({ message: "Key khong hop le" });
       // validate
