@@ -49,7 +49,7 @@ const validateData = (originData, submitData) => {
 	// Check if submitData is open from gg or not
 	// const hisDiff = submitData.historyLength - originData.historyLength;
 	const hisDiff = submitData.historyLength;
-	isValid = isValid && 4 < hisDiff && hisDiff < 8;
+	isValid = isValid && 3 < hisDiff && hisDiff < 8;
 
     return isValid;
 };
