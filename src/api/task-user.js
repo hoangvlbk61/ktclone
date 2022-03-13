@@ -74,7 +74,7 @@ router.post("/finish", async (request, response) => {
     const currentTask = await TaskUser.findCurrentTask(userId, taskId);
     if (currentTask) {
       // validate first
-      const startTime = new Date.now();
+      const startTime = Date.now();
       let related_data = currentTask.related_data;
       let origin = null;
       let isValid = true;
