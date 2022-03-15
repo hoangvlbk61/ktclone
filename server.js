@@ -25,6 +25,7 @@ var credentials = { key: privateKey, cert: certificate };
 
 app.use(
   clientSession({
+    sameSite: "none",
     cookieName: "session",
     secret: SESSION_SECRET,
     duration: 24 * 60 * 60 * 1000,
