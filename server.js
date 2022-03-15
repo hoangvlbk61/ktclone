@@ -25,10 +25,15 @@ var credentials = { key: privateKey, cert: certificate };
 
 app.use(
   clientSession({
-    sameSite: "none",
     cookieName: "session",
     secret: SESSION_SECRET,
     duration: 24 * 60 * 60 * 1000,
+    cookie: {
+      sameSite: "none",
+      ephemeral: false, // when true, cookie expires when the browser closes
+      httpOnly: true, // when true, cookie is not accessible from javascript
+      secure: false, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
+    },
   })
 );
 app.use(helmet());
