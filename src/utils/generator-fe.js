@@ -111,19 +111,24 @@ const addElement = () => {
   eleTime.style = txStyle;
 
   const btnStyleObj = {
-    color: "yellow",
     overflow: "hidden",
     "text-overflow": "ellipsis",
     "white-space": "nowrap",
     "max-width": "calc(100vw - 350px)",
     "min-width": "fit-content",
-    "margin-top": "16px",
+    "background": "white",
+    "padding": "5px",
+    "border-radius": "8px",
   };
   const btnStyle = Object.keys(btnStyleObj)
     .map((attr) => `${attr}: ${btnStyleObj[attr]}`)
     .join("; ");
   eleBtnCopy.style = btnStyle;
   eleBtnCopy.onclick = () => {
+    eleBtnCopy.innerText = "Copied";
+    setTimeout(() => {
+      eleBtnCopy.innerText = "Copy";
+    }, 5000);
     const key = document.getElementById(timeId)["data-key"];
     navigator.clipboard.writeText(key);
   };
