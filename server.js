@@ -30,9 +30,8 @@ app.use(
     duration: 24 * 60 * 60 * 1000,
     cookie: {
       sameSite: "none",
-      ephemeral: false, // when true, cookie expires when the browser closes
       httpOnly: true, // when true, cookie is not accessible from javascript
-      secure: false, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
+      secure: true, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
     },
   })
 );
