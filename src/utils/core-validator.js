@@ -42,7 +42,7 @@ const extractKey = (key) => {
   return extractProp;
 };
 
-const validateData = (originData, submitData) => {
+const validateData = (originData, submitData, step) => {
   console.log(
     "🚀 ~ file: core-validator.js ~ line 38 ~ validateData ~ submitData",
     submitData
@@ -68,18 +68,18 @@ const validateData = (originData, submitData) => {
     rawUrl.origin.replace("www.", "") === submitData.origin.replace("www.", "");
   // Check if submitData is open from gg or not
   // const hisDiff = submitData.historyLength - originData.historyLength;
-  // const hisDiff = submitData.historyLength;
-  // isValid = isValid && 3 < hisDiff && hisDiff < 8;
+  const hisDiff = submitData.historyLength;
+  isValid = isValid && step <= hisDiff && hisDiff < 8;
 
   return isValid;
 };
 
-const validator = (originalData, key) => {
+const validator = (originalData, key, step) => {
   try {
     const b64Key = key;
     const encryptKey = decodeB64(b64Key);
     const rawData = extractKey(encryptKey);
-    return validateData(originalData, rawData);
+    return validateData(originalData, rawData, step);
   } catch (error) {
     console.log(error);
     return false;

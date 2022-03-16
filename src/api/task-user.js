@@ -92,7 +92,9 @@ router.post("/finish", async (request, response) => {
           console.log("Run on origin");
           console.log("in", { date: startTime, origin });
           console.log("key", key);
-          isValid = validator({ date: startTime, origin }, key);
+          if (currentTask.type_task === "TRAFFIC")
+            isValid = validator({ date: startTime, origin }, key, 3);
+          else isValid = validator({ date: startTime, origin }, key, 0);
         }
         // else isValid = false;
         // } else isValid = true
