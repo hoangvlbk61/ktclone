@@ -68,8 +68,8 @@ const validateData = (originData, submitData) => {
     rawUrl.origin.replace("www.", "") === submitData.origin.replace("www.", "");
   // Check if submitData is open from gg or not
   // const hisDiff = submitData.historyLength - originData.historyLength;
-  const hisDiff = submitData.historyLength;
-  isValid = isValid && 3 < hisDiff && hisDiff < 8;
+  // const hisDiff = submitData.historyLength;
+  // isValid = isValid && 3 < hisDiff && hisDiff < 8;
 
   return isValid;
 };
