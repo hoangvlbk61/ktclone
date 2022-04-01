@@ -19,8 +19,8 @@ app.use(express.json());
 
 var http = require("http");
 var https = require("https");
-var privateKey = fs.readFileSync("./apikey/private.key", "utf8");
-var certificate = fs.readFileSync("./apikey/certificate.crt", "utf8");
+var privateKey = fs.readFileSync("./key-api-24h/private.key", "utf8");
+var certificate = fs.readFileSync("./key-api-24h/certificate.crt", "utf8");
 var credentials = { key: privateKey, cert: certificate };
 
 app.use(
@@ -28,11 +28,6 @@ app.use(
     cookieName: "session",
     secret: SESSION_SECRET,
     duration: 24 * 60 * 60 * 1000,
-    cookie: {
-      sameSite: "none",
-      httpOnly: true, // when true, cookie is not accessible from javascript
-      secure: true, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
-    },
   })
 );
 app.use(helmet());

@@ -20,6 +20,7 @@ router.post("/", async (request, response) => {
     }
 
     const sessionId = await Session.create(user.id);
+    console.log("session created", email, sessionId)
     request.session.id = sessionId;
     if (user.password) delete user.password;
     response.status(201).json({ ssid: sessionId, user });

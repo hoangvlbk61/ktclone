@@ -10,8 +10,10 @@ const path = require("path");
 const router = new Router();
 
 const imgDir = path.join(__dirname, "../../images");
-
+console.log("images dir ==== ", imgDir);
+console.log('diornames ', __dirname);
 const createFileDirIfNotExist = (dir) => {
+  console.log("===== dir", dir);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 };
 

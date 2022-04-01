@@ -10,6 +10,9 @@ router.use(headerMiddleware);
 
 router.post('/', async (request, response) => {
   try {
+console.log("requestData.cookies", request.cookies);    
+console.log("request.headers", request.headers);
+    console.log("request.session", request.session);
     let ssid = request.headers.ssid || request.session.id; 
     const session = await Session.find(ssid);
     if(!session)  
