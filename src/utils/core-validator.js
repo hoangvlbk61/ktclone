@@ -59,7 +59,7 @@ const validateData = (originData, submitData, step) => {
   isValid =
     isValid &&
     oriMm.isAfter(sbMm) &&
-    moment.duration(oriMm.diff(sbMm)).asMinutes() <= 10;
+    moment.duration(oriMm.diff(sbMm)).asMinutes() <= 1;
 
   // Check if submitData date is after < 10min than originData
   const rawUrl = new URL(originData.origin);
